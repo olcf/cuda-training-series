@@ -45,7 +45,7 @@ To run your code at NERSC on Cori, we can use Slurm:
 
 ```
 module load esslurm
-srun -C gpu -N 1 -t 10 -A m3502 --reservation=cuda_training --gres=gpu:1 -c 10 ./hello
+srun -C gpu -N 1 -n 1 -t 10 -A m3502 --reservation=cuda_training --gres=gpu:1 -c 10 ./hello
 ```
 
 Allocation `m3502` (and reservation `cuda_training`) is a custom allocation/reservation pair set up on Cori for this training series, and should be available to participants who registered in advance. If you cannot submit using this allocation and reservation, but already have access to another allocation that grants access to the Cori GPU nodes, you may use that instead. Note that the `cuda_training` reservation will not be valid after the training period ends.
@@ -54,7 +54,7 @@ If you prefer, you can instead reserve a GPU in an interactive session, and then
 
 ```
 salloc -C gpu -N 1 -t 60 -A m3502 --reservation=cuda_training --gres=gpu:1 -c 10
-srun -N 1 ./hello
+srun -n 1 ./hello
 ```
 
 Note that you only need to `module load esslurm` once per login session; this is what enables you to submit to the Cori GPU nodes.
