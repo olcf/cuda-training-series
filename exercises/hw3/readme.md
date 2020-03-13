@@ -78,7 +78,7 @@ Nsight Compute is installed as part of newer CUDA toolkits (10.1 and newer), but
 For the following profiler experiments, we will assume you have loaded the profile module and acquired a node for interactive usage:
 
 ```
-module load nsight-compute/2019.5.0
+module load nsight-compute
 bsub -W 10 -nnodes 1 -P <allocation_ID> -Is /bin/bash
 ```
 
