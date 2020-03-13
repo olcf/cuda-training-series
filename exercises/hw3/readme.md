@@ -130,4 +130,4 @@ Let's fill the GPU now.  We learned that a Tesla V100 has 80 SMs, and each SM ca
 
 (You should now observe a kernel duration that has dropped to the microsecond range - ~500us  - and a memory throughput that should be "close" to the peak theoretical of 900GB/s for a Tesla V100).
 
-For the Tesla V100 GPU, this calculation of 80 SMs * 2048 threads/SM = 168K threads is our definition of "lots of threads". 
+For the Tesla V100 GPU, this calculation of 80 SMs * 2048 threads/SM = 164K threads is our definition of "lots of threads". 
