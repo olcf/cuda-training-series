@@ -89,13 +89,13 @@ For this experiment, leave the code as you have created it to complete exercise 
 If you'd like to get a basic idea of "typical" profiler output, you could use the following command:
 
 ```
-nv-nsight-cu-cli ./vector_add
+jsrun -n1 -a1 -c1 -g1 nv-nsight-cu-cli ./vector_add
 ```
 
 However for this 1 block/1 thread test case, the profiler will spend several minutes assembling the requested set of information.  Since our focus is on kernel duration, we can use a command that allows the profiler to run more quickly:
 
 ```
-nv-nsight-cu-cli  --section SpeedOfLight --section MemoryWorkloadAnalysis ./vector_add
+jsrun -n1 -a1 -c1 -g1 nv-nsight-cu-cli  --section SpeedOfLight --section MemoryWorkloadAnalysis ./vector_add
 ```
 
 This will allow the profiler to complete its work in under a minute.
