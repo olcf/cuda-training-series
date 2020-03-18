@@ -79,7 +79,7 @@ For the following profiler experiments, we will assume you have loaded the profi
 
 ```
 module load nsight-compute
-bsub -W 10 -nnodes 1 -P <allocation_ID> -Is /bin/bash
+bsub -W 30 -nnodes 1 -P <allocation_ID> -Is /bin/bash
 ```
 
 ### **2a.  1 block of 1 thread**
