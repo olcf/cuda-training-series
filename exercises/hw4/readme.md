@@ -33,14 +33,14 @@ If you have trouble, you can look at *matrix_sums_solution.cu* for a complete ex
 
 ## **2. Profiling**
 
-We'll introduce something new: the profiler (in this case, NSight Compute). We'll use the profiler first to time the kernel execution times, and then to gather some "metric" information that will possibly shed light on our observations.
+We'll introduce something new: the profiler (in this case, Nsight Compute). We'll use the profiler first to time the kernel execution times, and then to gather some "metric" information that will possibly shed light on our observations.
 
-It's necessary to complete task 1 first. Next, load the NSight Compute module:
+It's necessary to complete task 1 first. Next, load the Nsight Compute module:
 ```
 module load nsight-compute/2019.5.0
 ```
 
-Then, launch NSight as follows:
+Then, launch Nsight as follows:
 (you may want to make your terminal session wide enough to make the output easy to read)
 
 ```
@@ -53,7 +53,7 @@ Are the kernel durations the same or different?
 Would you expect them to be the same or different?
 
 
-Next, launch *NSight* as follows:
+Next, launch *Nsight* as follows:
 
 ```
 lsfrun nv-nsight-cu-cli --metrics l1tex__t_sectors_pipe_lsu_mem_global_op_ld.sum,l1tex__t_requests_pipe_lsu_mem_global_op_ld.sum ./matrix_sums
@@ -68,5 +68,5 @@ How does this correspond to the observed kernel execution times for the first pr
 
 Can we improve this?  (Stay tuned for the next CUDA training session.)
 
-Here is a useful blog to help you get familiar with NSight Compute: https://devblogs.nvidia.com/using-nsight-compute-to-inspect-your-kernels/
+Here is a useful blog to help you get familiar with Nsight Compute: https://devblogs.nvidia.com/using-nsight-compute-to-inspect-your-kernels/
 
