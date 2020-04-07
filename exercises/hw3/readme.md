@@ -28,6 +28,25 @@ alias lsfrun='bsub -W 10 -nnodes 1 -P <allocation_ID> -Is jsrun -n1 -a1 -c1 -g1'
 lsfrun ./vector_add
 ```
 
+To run your code at NERSC on Cori, we can use Slurm:
+
+```
+module load esslurm
+srun -C gpu -N 1 -n 1 -t 10 -A m3502 --reservation cuda_training --gres=gpu:1 -c 10 ./vector_add
+```
+
+Allocation `m3502` is a custom allocation set up on Cori for this training series, and should be available to participants who registered in advance. If you cannot submit using this allocation, but already have access to another allocation that grants access to the Cori GPU nodes (such as m1759), you may use that instead.
+
+If you prefer, you can instead reserve a GPU in an interactive session, and then run an executable any number of times while the Slurm allocation is active (this is recommended if there are enough available nodes):
+
+```
+salloc -C gpu -N 1 -t 60 -A m3502 --reservation cuda_training --gres=gpu:1 -c 10
+srun -n 1 ./vector_add
+```
+
+Note that you only need to `module load esslurm` once per login session; this is what enables you to submit to the Cori GPU nodes.
+
+
 We've also changed the problem size from the previous example, so correct output should look like this:
 
 ```
@@ -59,8 +78,8 @@ Nsight Compute is installed as part of newer CUDA toolkits (10.1 and newer), but
 For the following profiler experiments, we will assume you have loaded the profile module and acquired a node for interactive usage:
 
 ```
-module load nsight-compute/2019.5.0
-bsub -W 10 -nnodes 1 -P <allocation_ID> -Is /bin/bash
+module load nsight-compute
+bsub -W 30 -nnodes 1 -P <allocation_ID> -Is /bin/bash
 ```
 
 ### **2a.  1 block of 1 thread**
@@ -70,13 +89,13 @@ For this experiment, leave the code as you have created it to complete exercise 
 If you'd like to get a basic idea of "typical" profiler output, you could use the following command:
 
 ```
-nv-nsight-cu-cli ./vector_add
+jsrun -n1 -a1 -c1 -g1 nv-nsight-cu-cli ./vector_add
 ```
 
 However for this 1 block/1 thread test case, the profiler will spend several minutes assembling the requested set of information.  Since our focus is on kernel duration, we can use a command that allows the profiler to run more quickly:
 
 ```
-nv-nsight-cu-cli  --section SpeedOfLight --section MemoryWorkloadAnalysis ./vector_add
+jsrun -n1 -a1 -c1 -g1 nv-nsight-cu-cli  --section SpeedOfLight --section MemoryWorkloadAnalysis ./vector_add
 ```
 
 This will allow the profiler to complete its work in under a minute.
@@ -111,4 +130,4 @@ Let's fill the GPU now.  We learned that a Tesla V100 has 80 SMs, and each SM ca
 
 (You should now observe a kernel duration that has dropped to the microsecond range - ~500us  - and a memory throughput that should be "close" to the peak theoretical of 900GB/s for a Tesla V100).
 
-For the Tesla V100 GPU, this calculation of 80 SMs * 2048 threads/SM = 168K threads is our definition of "lots of threads". 
+For the Tesla V100 GPU, this calculation of 80 SMs * 2048 threads/SM = 164K threads is our definition of "lots of threads". 
