@@ -56,7 +56,7 @@ We'll introduce something new: the profiler (in this case, Nsight Compute). We'l
 
 It's necessary to complete task 1 first. Next, load the Nsight Compute module:
 ```
-module load nsight-compute/2019.5.0
+module load nsight-compute
 ```
 
 Then, launch Nsight as follows:
