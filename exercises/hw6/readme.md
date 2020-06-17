@@ -63,9 +63,9 @@ In this exercise, you are given a code that increments a large array on the GPU.
  a. First, compile and profile the code as-is:
 
    ```
-   module load nsight-compute
+   module load nsight-systems
    nvcc -o array_inc array_inc.cu
-   lsfrun nv-nsight-cu-cli ./array_inc
+   lsfrun nsys profile --stats=true ./array_inc
    ```
  
    Make a note of the kernel execution duration.
