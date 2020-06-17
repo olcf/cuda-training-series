@@ -73,5 +73,7 @@ In this exercise, you are given a code that increments a large array on the GPU.
  b. Now, modify the code to use managed memory. Replace the malloc operations with cudaMallocManaged, and eliminate the cudaMemcpy operations.  Do you need to replace the *cudaMemcpy* operation from device to host with a *cudaDeviceSynchronize()*? Why? Now, compile and profile the code again. Compare the kernel execution duration to the previous result. Note the profiler indication of CPU and GPU page faults.
 
  c. Now, modify the code to insert prefetching of the array to the GPU immediately before the kernel call, and back to the CPU immediately after the kernel call. Compile and profile the code again. Compare the kernel execution time to the previous results. Are there still any page faults? Why?
+ 
+ d. Bonus: Modify the code to run the *inc()* kernel 10000 times in a row instead of just once. What can be said about the impact of memory operations on our runtime? What would this suggest for a real-world application?
 
 If you need help, refer to the *array_inc_solution.cu*.
