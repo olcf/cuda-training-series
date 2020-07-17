@@ -28,6 +28,24 @@ alias lsfrun='bsub -W 10 -nnodes 1 -P <allocation_ID> -Is jsrun -n1 -a1 -c1 -g1'
 lsfrun ./linked_list
 ```
 
+To run your code at NERSC on Cori, we can use Slurm:
+
+```
+module load esslurm
+srun -C gpu -N 1 -n 1 -t 10 -A m3502 --gres=gpu:1 -c 10 ./linked_list
+```
+
+Allocation `m3502` is a custom allocation set up on Cori for this training series, and should be available to participants who registered in advance. If you cannot submit using this allocation, but already have access to another allocation that grants access to the Cori GPU nodes (such as m1759), you may use that instead.
+
+If you prefer, you can instead reserve a GPU in an interactive session, and then run an executable any number of times while the Slurm allocation is active (this is recommended if there are enough available nodes):
+
+```
+salloc -C gpu -N 1 -t 60 -A m3502 --gres=gpu:1 -c 10
+srun -n 1 ./linked_list
+```
+
+Note that you only need to `module load esslurm` once per login session; this is what enables you to submit to the Cori GPU nodes.
+
 Correct output should look like this:
 
 ```
@@ -45,8 +63,9 @@ In this exercise, you are given a code that increments a large array on the GPU.
  a. First, compile and profile the code as-is:
 
    ```
+   module load nsight-systems
    nvcc -o array_inc array_inc.cu
-   lsfrun nvprof ./array_inc
+   lsfrun nsys profile --stats=true ./array_inc
    ```
  
    Make a note of the kernel execution duration.
@@ -54,5 +73,7 @@ In this exercise, you are given a code that increments a large array on the GPU.
  b. Now, modify the code to use managed memory. Replace the malloc operations with cudaMallocManaged, and eliminate the cudaMemcpy operations.  Do you need to replace the *cudaMemcpy* operation from device to host with a *cudaDeviceSynchronize()*? Why? Now, compile and profile the code again. Compare the kernel execution duration to the previous result. Note the profiler indication of CPU and GPU page faults.
 
  c. Now, modify the code to insert prefetching of the array to the GPU immediately before the kernel call, and back to the CPU immediately after the kernel call. Compile and profile the code again. Compare the kernel execution time to the previous results. Are there still any page faults? Why?
+ 
+ d. Bonus: Modify the code to run the *inc()* kernel 10000 times in a row instead of just once. What can be said about the impact of memory operations on our runtime? What would this suggest for a real-world application?
 
 If you need help, refer to the *array_inc_solution.cu*.
