@@ -28,7 +28,7 @@ To run your code at NERSC on Cori, we can use Slurm:
 
 ```
 module load esslurm
-srun -C gpu -N 1 -n 1 -t 10 -A m3502 --gres=gpu:1 -c 10 ./overlap
+srun -C gpu -N 1 -n 1 -t 10 -A m3502 -G 1 -c 10 ./overlap
 ```
 
 Allocation `m3502` is a custom allocation set up on Cori for this training series, and should be available to participants who registered in advance. If you cannot submit using this allocation, but already have access to another allocation that grants access to the Cori GPU nodes (such as m1759), you may use that instead.
@@ -36,7 +36,7 @@ Allocation `m3502` is a custom allocation set up on Cori for this training serie
 If you prefer, you can instead reserve a GPU in an interactive session, and then run an executable any number of times while the Slurm allocation is active (this is recommended if there are enough available nodes):
 
 ```
-salloc -C gpu -N 1 -t 60 -A m3502 --gres=gpu:1 -c 10
+salloc -C gpu -N 1 -t 60 -A m3502 -G 1 -c 10
 srun -n 1 ./overlap
 ```
 
@@ -78,11 +78,17 @@ You can compile the code with:
 nvcc -o multi multi.cu
 ```
 
-You can run the code with:
+You can run the code on Summit with:
 
 ```
 alias lsfrun='bsub -W 10 -nnodes 1 -P <allocation_ID> -Is jsrun -n1 -a1 -c1 -g4'
 lsfrun ./multi
+```
+
+On Cori, make sure that you ask for an allocation with 4 GPUs, e.g.
+
+```
+srun -C gpu -N 1 -n 1 -t 10 -A m3502 -G 4 -c 40 ./multi
 ```
 
 **HINT**: This exercise might be simpler than you think. You won't need to do anything with streams at all for this. You'll only need to make a simple modification to each of the for-loops.
