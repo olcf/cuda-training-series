@@ -62,19 +62,23 @@ One you have a PASS result, begin the first round of analysis by running the pro
 
 ```bash
 module load nsight-compute
-lsfrun nv-nsight-cu-cli --metrics l1tex__t_sectors_pipe_lsu_mem_global_op_ld.sum,l1tex__t_requests_pipe_lsu_mem_global_op_ld.sum,l1tex__t_sectors_pipe_lsu_mem_global_op_st.sum,l1tex__t_requests_pipe_lsu_mem_global_op_st.sum ./task1
+lsfrun nv-nsight-cu-cli --metrics l1tex__t_sectors_pipe_lsu_mem_global_op_ld.sum,l1tex__t_requests_pipe_lsu_mem_global_op_ld.sum,l1tex__average_t_sectors_per_request_pipe_lsu_mem_global_op_ld.ratio,l1tex__t_sectors_pipe_lsu_mem_global_op_st.sum,l1tex__t_requests_pipe_lsu_mem_global_op_st.sum,l1tex__average_t_sectors_per_request_pipe_lsu_mem_global_op_st.ratio,smsp__sass_average_data_bytes_per_sector_mem_global_op_ld.pct,smsp__sass_average_data_bytes_per_sector_mem_global_op_st.pct ./task1
 ```
 
 Here's a breakdown of the metrics we are requesting from the profiler:
 
  - *l1tex__t_sectors_pipe_lsu_mem_global_op_ld.sum*: The number of global load transactions
  - *l1tex__t_requests_pipe_lsu_mem_global_op_ld.sum*: The number of global load requests
+ - *l1tex__average_t_sectors_per_request_pipe_lsu_mem_global_op_ld.ratio*: The number of global load transactions per request
+ - *smsp__sass_average_data_bytes_per_sector_mem_global_op_ld.pct*: The global load efficiency
  - *l1tex__t_sectors_pipe_lsu_mem_global_op_st.sum*: The number of global store transactions
  - *l1tex__t_requests_pipe_lsu_mem_global_op_st.sum*: The number of global store requests
+ - *l1tex__average_t_sectors_per_request_pipe_lsu_mem_global_op_st.ratio*: The number of global store transactions per request
+ - *smsp__sass_average_data_bytes_per_sector_mem_global_op_st.pct*: The global store efficiency
 
-Using these metrics, we can easily calculate the number of transactions per request for both global loads and global stores. If we have an idea of how many transactions should be needed per request, we can also calculate our global load and store efficiences by dividing the theoretical minimum number of transactions per request by the actual number of transactions per request we calculated from the above metrics. 
+Using these metrics, we can easily observe various characteristics of our kernel. Many of these metrics are self-explanatory, but it may not be immediately obvious how global load and store *efficiency* is calculated. We can also calculate our global load and store efficiences by dividing the theoretical minimum number of transactions per request by the actual number of transactions per request we calculated from the above metrics. 
 
-How do we know what the theoretical minimum number of transactions per request actually is? A cache line is 128 bytes, and there are 32 threads in a warp. If the 32 threads are accessing consecutive 4 byte words (i.e. single precision floats), then there should be 4 transactions in that request (we are just asking for four consecutive 32-byte sectors of DRAM). In our case, we are using double precision floats, so the 32 threads would be accessing consecutive 8 byte words (256 bytes total). Therefore, the theoretical minimum number of transactions per request in our case would be 8.
+How do we know what the theoretical minimum number of transactions per request actually is? A cache line is 128 bytes, and there are 32 threads in a warp. If the 32 threads are accessing consecutive 4 byte words (i.e. single precision floats), then there should be 4 transactions in that request (we are just asking for four consecutive 32-byte sectors of DRAM). In our case, we are using double precision floats, so the 32 threads would be accessing consecutive 8 byte words (256 bytes total). Therefore, the theoretical minimum number of transactions per request in our case would be 8 (eight consecutive 32-byte sectors of DRAM).
 
 Considering the output of the profiler, are the Global Load Efficiency and Global Store Efficiency both at 100%? Why or why not? This may be a good time to study the load and store indexing carefully, and review the global coalescing rules learned in Homework 4.
 
@@ -101,14 +105,14 @@ You should get a PASS output.  Has the measured bandwidth improved?
 Once again we will use the profiler to help explain our observations.  We have introduced shared memory operations into our algorithm, so we will include shared memory measure metrics in our profiling:
 
 ```bash
-lsfrun nv-nsight-cu-cli --metrics l1tex__t_sectors_pipe_lsu_mem_global_op_ld.sum,l1tex__t_requests_pipe_lsu_mem_global_op_ld.sum,l1tex__t_sectors_pipe_lsu_mem_global_op_st.sum,l1tex__t_requests_pipe_lsu_mem_global_op_st.sum,l1tex__data_pipe_lsu_wavefronts_mem_shared_op_ld.sum,l1tex__data_pipe_lsu_wavefronts_mem_shared_op_st.sum,l1tex__data_bank_conflicts_pipe_lsu_mem_shared_op_ld.sum,l1tex__data_bank_conflicts_pipe_lsu_mem_shared_op_st.sum,smsp__cycles_active.avg.pct_of_peak_sustained_elapsed ./task2
+lsfrun nv-nsight-cu-cli --metrics l1tex__t_sectors_pipe_lsu_mem_global_op_ld.sum,l1tex__t_requests_pipe_lsu_mem_global_op_ld.sum,l1tex__average_t_sectors_per_request_pipe_lsu_mem_global_op_ld.ratio,l1tex__t_sectors_pipe_lsu_mem_global_op_st.sum,l1tex__t_requests_pipe_lsu_mem_global_op_st.sum,l1tex__average_t_sectors_per_request_pipe_lsu_mem_global_op_st.ratio,smsp__sass_average_data_bytes_per_sector_mem_global_op_ld.pct,smsp__sass_average_data_bytes_per_sector_mem_global_op_st.pct,l1tex__data_pipe_lsu_wavefronts_mem_shared_op_ld.sum,l1tex__data_pipe_lsu_wavefronts_mem_shared_op_st.sum,l1tex__data_bank_conflicts_pipe_lsu_mem_shared_op_ld.sum,l1tex__data_bank_conflicts_pipe_lsu_mem_shared_op_st.sum,smsp__sass_average_data_bytes_per_wavefront_mem_shared.pct ./task2
 ```
 
  - *l1tex__data_pipe_lsu_wavefronts_mem_shared_op_ld.sum*: The number of shared load transactions
  - *l1tex__data_pipe_lsu_wavefronts_mem_shared_op_st.sum*: The number of shared store transactions
  - *l1tex__data_bank_conflicts_pipe_lsu_mem_shared_op_ld.sum*: The number of shared load bank conflicts
  - *l1tex__data_bank_conflicts_pipe_lsu_mem_shared_op_st.sum*: The number of shared store bank conflicts
- - *smsp__cycles_active.avg.pct_of_peak_sustained_elapsed*: SM efficiency
+ - *smsp__sass_average_data_bytes_per_wavefront_mem_shared.pct*: Shared Memory efficiency
 
 You should be able to confirm that the previous global load/global store efficiency issues have been resolved, with proper coalescing.  However now we have a problem with shared memory: bank conflicts.  Review module 4 information on bank conflicts, for a basic definition of how these arise during shared memory access.
 
@@ -127,7 +131,7 @@ You should get a passing result. Has the achieved bandwidth improved?
 You can profile your code to confirm that we are now using shared memory in an efficient fashion, for both loads and stores.
 
 ```bash
-lsfrun nv-nsight-cu-cli --metrics l1tex__t_sectors_pipe_lsu_mem_global_op_ld.sum,l1tex__t_requests_pipe_lsu_mem_global_op_ld.sum,l1tex__t_sectors_pipe_lsu_mem_global_op_st.sum,l1tex__t_requests_pipe_lsu_mem_global_op_st.sum,l1tex__data_pipe_lsu_wavefronts_mem_shared_op_ld.sum,l1tex__data_pipe_lsu_wavefronts_mem_shared_op_st.sum,l1tex__data_bank_conflicts_pipe_lsu_mem_shared_op_ld.sum,l1tex__data_bank_conflicts_pipe_lsu_mem_shared_op_st.sum,smsp__cycles_active.avg.pct_of_peak_sustained_elapsed,l1tex__t_bytes_pipe_lsu_mem_global_op_st.sum.per_second,l1tex__t_bytes_pipe_lsu_mem_global_op_ld.sum.per_second ./task3
+lsfrun nv-nsight-cu-cli --metrics l1tex__t_sectors_pipe_lsu_mem_global_op_ld.sum,l1tex__t_requests_pipe_lsu_mem_global_op_ld.sum,l1tex__average_t_sectors_per_request_pipe_lsu_mem_global_op_ld.ratio,l1tex__t_sectors_pipe_lsu_mem_global_op_st.sum,l1tex__t_requests_pipe_lsu_mem_global_op_st.sum,l1tex__average_t_sectors_per_request_pipe_lsu_mem_global_op_st.ratio,smsp__sass_average_data_bytes_per_sector_mem_global_op_ld.pct,smsp__sass_average_data_bytes_per_sector_mem_global_op_st.pct,l1tex__data_pipe_lsu_wavefronts_mem_shared_op_ld.sum,l1tex__data_pipe_lsu_wavefronts_mem_shared_op_st.sum,l1tex__data_bank_conflicts_pipe_lsu_mem_shared_op_ld.sum,l1tex__data_bank_conflicts_pipe_lsu_mem_shared_op_st.sum,smsp__sass_average_data_bytes_per_wavefront_mem_shared.pct  ./task3
 ```
 
 Finally, if you wish, compare the achieved bandwidth reported by your code, to a proxy measurement of the peak achievable bandwidth, by running the bandwidthTest CUDA sample code and using the device-to-device memory number for comparison.
