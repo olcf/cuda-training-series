@@ -24,7 +24,9 @@ __global__ void my_reduce_kernel(int *data){
   auto g3 = tiled_partition(g2, 16);
   // for each task, adjust the group to point to the last group created above
   auto g = g3;
-  reduce(g, sdata, data[gindex]);
+  // Make sure we send in the appropriate patch of shared memory
+  int sdata_offset = (g1.thread_index().x / g.size()) * g.size();
+  reduce(g, sdata + sdata_offset, data[gindex]);
 }
 
 int main(){
