@@ -137,7 +137,7 @@ Start with the *task2.cu* code, and perform 2 things:
 Once you have made the above modification, compile your code as follows:
 
 ```bash
-nvcc -arch=sm_60 -o task2 task2.cu -rdc=true -std=c++11
+nvcc -arch=sm_70 -o task2 task2.cu -rdc=true -std=c++11
 ```
 
 and run it as follows:
