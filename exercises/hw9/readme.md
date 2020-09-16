@@ -8,7 +8,7 @@ You can compile your code as follows:
 
 ```bash
 module load cuda
-nvcc -arch=sm_60 -o task1 task1.cu -std=c++11
+nvcc -arch=sm_70 -o task1 task1.cu -std=c++11
 ```
 
 The module load command selects a CUDA compiler for your use. The module load command only needs to be done once per session/login. *nvcc* is the CUDA compiler invocation command. The syntax is generally similar to gcc/g++.
