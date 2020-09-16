@@ -11,7 +11,7 @@ module load cuda
 nvcc -arch=sm_70 -o task1 task1.cu -std=c++11
 ```
 
-The module load command selects a CUDA compiler for your use. The module load command only needs to be done once per session/login. *nvcc* is the CUDA compiler invocation command. The syntax is generally similar to gcc/g++.
+The module load command selects a CUDA compiler for your use. The module load command only needs to be done once per session/login. *nvcc* is the CUDA compiler invocation command. The syntax is generally similar to gcc/g++. Note that because we're using C++11 (which is required for cooperative groups) we need a sufficiently modern compiler (gcc >= 5 should be sufficient). If you're on Summit, make sure to do `module load gcc` because the system default gcc is not recent enough.
 
 To run your code, we will use an LSF command:
 
