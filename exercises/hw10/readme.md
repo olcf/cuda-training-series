@@ -97,7 +97,7 @@ If you need help, refer to *streams_solution.cu*.
 
 ## **3. Bonus Task - Multi-GPU**
 
-Remember that a CUDA stream is tied to a particular GPU. How can we combine CPU threading with more than a single GPU? If you're feeling adventurous, try adapting this homework's code to submit work to 4 GPUs, instead of just one. Note that this will requireFeel free to increase the problem size in order to ensure that there is enough work to observe a performance impact. Compile and run your code using the following instructions. 
+Remember that a CUDA stream is tied to a particular GPU. How can we combine CPU threading with more than a single GPU? If you're feeling adventurous, try adapting this homework's code to submit work to 4 GPUs, instead of just one. Note that this will require keeping track of which cuda stream was bound to which GPU when it was created. Feel free to increase the problem size in order to ensure that there is enough work to observe a performance impact. Compile and run your code using the following instructions. 
 
 On Summit:
 ```
