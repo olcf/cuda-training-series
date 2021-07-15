@@ -27,13 +27,13 @@ lsfrun ./streams
 To build your code on NERSC's Cori-GPU
 
 ```
-module load cgpu cuda
+module load cgpu cuda/11.4.0
 nvcc -o streams streams.cu -DUSE_STREAMS
 ```
 
 To run during the node reservation (10:30-12:30 Pacific time on July 16):
 ```
-module load cgpu cuda
+module load cgpu cuda/11.4.0
 srun -C gpu -N 1 -n 1 -t 10 -A ntrain --reservation=cuda_training -q shared -G 1 -c 8 ./streams
 ```
 
