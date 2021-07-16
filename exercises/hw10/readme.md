@@ -88,7 +88,7 @@ On Cori:
 ```
 nvcc -Xcompiler -fopenmp -o streams streams.cu -DUSE_STREAMS
 export OMP_NUM_THREADS=8
-srun -C gpu -N 1 -n 1 -t 10 -A ntrain --reservation=cuda_training -q shared -G 1 -c 8
+srun -C gpu -N 1 -n 1 -t 10 -A ntrain --reservation=cuda_training -q shared -G 1 -c 8 ./streams
 ```
 
 What does the performance look like compared to exercise 1? It should look pretty similar. How about when you profile the code? Unfortunately, the profiler currently requires some serialization when profiling across CPU threads, so you should actually see slower performance compared to the non-overlapped version. This should be reflected in the resulting qdrep file. Notice that we don't observe nearly as much concurrent execution on the GPU. This is something we are working on, and future versions of the profiler suffer from this limitation.
@@ -110,5 +110,5 @@ On Cori:
 ```
 nvcc -Xcompiler -fopenmp -o streams streams.cu -DUSE_STREAMS
 export OMP_NUM_THREADS=8
-srun -C gpu -N 1 -n 1 -t 10 -A ntrain --reservation=cuda_training -q shared -G 4 -c 8
+srun -C gpu -N 1 -n 1 -t 10 -A ntrain --reservation=cuda_training -q shared -G 4 -c 8 ./streams
 ```
