@@ -1,6 +1,6 @@
 # **Task 1**
 
-In this task we will explore using compute-sanitizer.  A complete tiled matrix-multiply example code is provided in the CUDA programming guide.  The task1.cu code includes this code with a few changes, and also a main() routine to drive the operation.  You are providing support services to a  cluster user community, and one of your users has presented this code with the report that "CUDA error checking doesn't show any errors, but I'm not getting the right answer.  Please help!"
+In this task we will explore using compute-sanitizer.  A complete tiled matrix-multiply example code is provided in the CUDA programming guide. The *task1.cu* code includes this code with a few changes, and also a main() routine to drive the operation.  You are providing support services to a cluster user community, and one of your users has presented this code with the report that "CUDA error checking doesn't show any errors, but I'm not getting the right answer.  Please help!"
 
 First, compile the code as follows, and run the code to observe the reported behavior:
 
@@ -9,7 +9,7 @@ module load cuda
 nvcc -arch=sm_70 task1.cu -o task1 -lineinfo
 ```
 
-We are compiling the code for the GPU architecture being used (Volta SM 7.0 in this case) and we are also compiling with --lineinfo switch.  You know as a CUDA support engineer that this will be a useful switch when it comes to using compute-sanitizer.
+We are compiling the code for the GPU architecture being used (Volta SM 7.0 in this case) and we are also compiling with --lineinfo switch. You know as a CUDA support engineer that this will be a useful switch when it comes to using compute-sanitizer.
 
 To run your code, we will use an LSF command:
 
@@ -45,7 +45,7 @@ srun -n 1 ./task1
 ```
 
 To run outside of the node reservation window:
-Same steps as above, but do not include "--reservation=cuda_training -q shared" in the srun or salloc commands.
+Same steps as above, but do not include "*--reservation=cuda_training -q shared*" in the srun or salloc commands.
 
 If this code produces the correct matrix result, it will display:
 
@@ -57,7 +57,7 @@ But unfortunately we don't see that.
 
 ## Part A 
 
-Use basic compute-sanitizer functionality (no additional switches) to identify a problem in the code.  Using the output from compute-sanitizer, identify the offending line of code. Fix this issue.
+Use basic *compute-sanitizer* functionality (no additional switches) to identify a problem in the code. Using the output from *compute-sanitizer*, identify the offending line of code. Fix this issue.
 
 Hints:
   - Remember that *-lineinfo* will cause compute-sanitizer (in this usage) to report the actual line of code that is causing the problem
