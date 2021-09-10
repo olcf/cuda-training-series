@@ -6,7 +6,7 @@ First, compile the code as follows, and run the code to observe the reported beh
 
 ```
 module load cuda
-nvcc -arch=sm_70 task1.cu -o task1 --lineinfo
+nvcc -arch=sm_70 task1.cu -o task1 -lineinfo
 ```
 
 We are compiling the code for the GPU architecture being used (Volta SM 7.0 in this case) and we are also compiling with --lineinfo switch.  You know as a CUDA support engineer that this will be a useful switch when it comes to using compute-sanitizer.
@@ -28,7 +28,7 @@ To build your code on NERSC's Cori-GPU
 
 ```
 module load cgpu cuda/11.4.0
-nvcc -arch=sm_70 task1.cu -o task1 --lineinfo
+nvcc -arch=sm_70 task1.cu -o task1 -lineinfo
 ```
 
 To run during the node reservation (10:30-12:30 Pacific time on July 16):
@@ -60,7 +60,7 @@ But unfortunately we don't see that.
 Use basic compute-sanitizer functionality (no additional switches) to identify a problem in the code.  Using the output from compute-sanitizer, identify the offending line of code. Fix this issue.
 
 Hints:
-  - remember that --lineinfo will cause compute-sanitizer (in this usage) to report the actual line of code that is causing the problem
+  - remember that -lineinfo will cause compute-sanitizer (in this usage) to report the actual line of code that is causing the problem
   - even if you didn't have this information (line number) could you use other compute sanitizer information to quickly deduce the line to focus on in this case?  You could use the type of memory access violation as a clue.  Which lines of code in the kernel are doing that type of memory access (hint, there is only one line of kernel code that is doing this.)
   - memory access problems are often caused by indexing errors.  See if you can spot an indexing error that may lead to this issue (hint - the classic computer science "off by one" error.)
   - refer to task1_solution.cu if you get stuck
