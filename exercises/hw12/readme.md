@@ -5,10 +5,47 @@ In this task we will explore using compute-sanitizer.  A complete tiled matrix-m
 First, compile the code as follows, and run the code to observe the reported behavior:
 
 ```
+module load cuda
 nvcc -arch=sm_70 task1.cu -o task1 --lineinfo
 ```
 
 We are compiling the code for the GPU architecture being used (Volta SM 7.0 in this case) and we are also compiling with --lineinfo switch.  You know as a CUDA support engineer that this will be a useful switch when it comes to using compute-sanitizer.
+
+To run your code, we will use an LSF command:
+
+```
+bsub -W 10 -nnodes 1 -P <allocation_ID> -Is jsrun -n1 -a1 -c1 -g1 ./task1
+```
+
+Alternatively, you may want to create an alias for your bsub command in order to make subsequent runs easier:
+
+```
+alias lsfrun='bsub -W 10 -nnodes 1 -P <allocation_ID> -Is jsrun -n1 -a1 -c1 -g1'
+lsfrun ./task1
+```
+
+To build your code on NERSC's Cori-GPU
+
+```
+module load cgpu cuda/11.4.0
+nvcc -arch=sm_70 task1.cu -o task1 --lineinfo
+```
+
+To run during the node reservation (10:30-12:30 Pacific time on July 16):
+```
+module load cgpu cuda/11.4.0
+srun -C gpu -N 1 -n 1 -t 10 -A ntrain --reservation=cuda_training -q shared -G 1 -c 1 ./task1
+```
+
+or grab a GPU node first, then run interactively:
+```
+module load cgpu cuda 
+salloc -C gpu -N 1 -t 60 -A ntrain --reservation=cuda_training -q shared -G 1 -c 1
+srun -n 1 ./task1
+```
+
+To run outside of the node reservation window:
+Same steps as above, but do not include "--reservation=cuda_training -q shared" in the srun or salloc commands.
 
 If this code produces the correct matrix result, it will display:
 
@@ -20,7 +57,7 @@ But unfortunately we don't see that.
 
 ## Part A 
 
-Use basic compute-sanitizer functionality (no additional switches) to identify a problem in the code.  Using the output from compute-sanitizer, identify the offending line of code.  Fix this issue.
+Use basic compute-sanitizer functionality (no additional switches) to identify a problem in the code.  Using the output from compute-sanitizer, identify the offending line of code. Fix this issue.
 
 Hints:
   - remember that --lineinfo will cause compute-sanitizer (in this usage) to report the actual line of code that is causing the problem
@@ -40,18 +77,26 @@ Hints:
 
 # **Task 2**
 
-In this task we will explore basic usage of cuda-gdb.  Once again you are providing user support at a cluster help desk.  The user has a code that produces a -inf (negative floating-point infinity) result, and that is not expected.  The code consists of a transformation operation (one data element created/modified per thread) followed by a reduction operation (per-thread results summed together). The output of the reduction is -inf.  See if you can use cuda-gdb to identify the problem and rectify it.
+In this task we will explore basic usage of cuda-gdb. Once again you are providing user support at a cluster help desk. The user has a code that produces a -inf (negative floating-point infinity) result, and that is not expected. The code consists of a transformation operation (one data element created/modified per thread) followed by a reduction operation (per-thread results summed together). The output of the reduction is -inf. See if you can use cuda-gdb to identify the problem and rectify it.
 
-To prepare to use cuda-gdb, its necessary to compile a debug project.  Therefore compile the code as follows:
+To prepare to use cuda-gdb, its necessary to compile a debug project. Therefore compile the code as follows:
 
 ```
 nvcc -arch=sm_70 task2.cu -o task2 -G -g -std=c++14
 ```
 
-You can then start debugging with:
+You can then start debugging.
+
+On Summit:
 
 ```
-cuda-gdb ./task2
+jsrun -n1 -a1 -c1 -g1 cuda-gdb ./task2
+```
+
+On Cori:
+
+```
+srun -n 1 ./task2
 ```
 
 Don't forget that you cannot inspect device data until you are stopped after a device-code breakpoint.
