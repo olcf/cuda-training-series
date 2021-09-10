@@ -60,14 +60,14 @@ But unfortunately we don't see that.
 Use basic compute-sanitizer functionality (no additional switches) to identify a problem in the code.  Using the output from compute-sanitizer, identify the offending line of code. Fix this issue.
 
 Hints:
-  - remember that -lineinfo will cause compute-sanitizer (in this usage) to report the actual line of code that is causing the problem
-  - even if you didn't have this information (line number) could you use other compute sanitizer information to quickly deduce the line to focus on in this case?  You could use the type of memory access violation as a clue.  Which lines of code in the kernel are doing that type of memory access (hint, there is only one line of kernel code that is doing this.)
-  - memory access problems are often caused by indexing errors.  See if you can spot an indexing error that may lead to this issue (hint - the classic computer science "off by one" error.)
-  - refer to task1_solution.cu if you get stuck
+  - Remember that *-lineinfo* will cause compute-sanitizer (in this usage) to report the actual line of code that is causing the problem
+  - Even if you didn't have this information (line number) could you use other compute sanitizer information to quickly deduce the line to focus on in this case?  You could use the type of memory access violation as a clue.  Which lines of code in the kernel are doing that type of memory access (hint, there is only one line of kernel code that is doing this.)
+  - Memory access problems are often caused by indexing errors.  See if you can spot an indexing error that may lead to this issue (hint - the classic computer science "off by one" error.)
+  - Refer to *task1_solution.cu* if you get stuck
 
 ## Part B
 
-Yay! You sorted out the problem, made the change to indexing, and now the code prints "Success!"  It's time to send the user on their way.  Or is it?  Could there be other errors?  Use additional compute-sanitizer switches (--tool racecheck, --tool initcheck, --tool synccheck) to identify other "latent" issues.  Fix them
+Yay! You sorted out the problem, made the change to indexing, and now the code prints "Success!"  It's time to send the user on their way. Or is it? Could there be other errors?  Use additional compute-sanitizer switches (*--tool racecheck*, *--tool initcheck*, *--tool synccheck*) to identify other "latent" issues. Fix them.
 
 Hints:
   - the only tool that should report a problem at this point is the racecheck tool.
@@ -77,9 +77,9 @@ Hints:
 
 # **Task 2**
 
-In this task we will explore basic usage of cuda-gdb. Once again you are providing user support at a cluster help desk. The user has a code that produces a -inf (negative floating-point infinity) result, and that is not expected. The code consists of a transformation operation (one data element created/modified per thread) followed by a reduction operation (per-thread results summed together). The output of the reduction is -inf. See if you can use cuda-gdb to identify the problem and rectify it.
+In this task we will explore basic usage of cuda-gdb. Once again you are providing user support at a cluster help desk. The user has a code that produces a *-inf* (negative floating-point infinity) result, and that is not expected. The code consists of a transformation operation (one data element created/modified per thread) followed by a reduction operation (per-thread results summed together). The output of the reduction is *-inf*. See if you can use *cuda-gdb* to identify the problem and rectify it.
 
-To prepare to use cuda-gdb, its necessary to compile a debug project. Therefore compile the code as follows:
+To prepare to use *cuda-gdb*, its necessary to compile a debug project. Therefore compile the code as follows:
 
 ```
 nvcc -arch=sm_70 task2.cu -o task2 -G -g -std=c++14
@@ -101,17 +101,17 @@ srun -n 1 ./task2
 
 Don't forget that you cannot inspect device data until you are stopped after a device-code breakpoint.
 
-Once you have identified the source of the issue, see if you can propose a simple code modification to work around the issue.  If you get stuck on this part (proposing a solution), refer to the task2_solution.cu.  Careful code inspection will likely immediately point out the issue, however the purpose of this task is not actually to fix the code this way, but to learn to use cuda-gdb
+Once you have identified the source of the issue, see if you can propose a simple code modification to work around the issue. If you get stuck on this part (proposing a solution), refer to the *task2_solution.cu*. Careful code inspection will likely immediately point out the issue, however the purpose of this task is not actually to fix the code this way, but to learn to use *cuda-gdb*.
 
 Hints:
- - the code is attempting to estimate the sum of an alternating harmonic series (ahs), whose sum should be equal to the natural log of 2.
- - the code is broken into two parts: the ahs term generator (produced by the device function ahs) which takes only the index of the term to generate, and a standard sweep parallel reduction, similar to the content in session 5 of this training series.
- - generally speaking, floating point arithmetic on inf or -inf inputs will produce a inf or -inf output
- - decide whether you think the -inf is likely to appear as a result of the initial transformation operation, or the subsequent reduction operation
- - use this reasoning to choose a point for an initial breakpoint
- - inspect data to see if you can observe -inf in any of the intermediate data
- - use this observation to repeat the process of setting a breakpoint and inspecting data
- - alternatively, work linearly through the code, setting an initial breakpoint and single-stepping, to see if you can observe incorrect data
- - you may need to change thread focus or observe data belonging to other threads
- - the reduction also offers the opportunity to tackle this problem via divide-and-conquer, or binary searching
- - consider reducing the problem size (i.e. length of terms to generate the estimate) to simplify your debug effort
+ - The code is attempting to estimate the sum of an alternating harmonic series (ahs), whose sum should be equal to the natural log of 2.
+ - The code is broken into two parts: the ahs term generator (produced by the device function ahs) which takes only the index of the term to generate, and a standard sweep parallel reduction, similar to the content in session 5 of this training series.
+ - Generally speaking, floating point arithmetic on *inf* or *-inf* inputs will produce a *inf* or *-inf* output
+ - Decide whether you think the *-inf* is likely to appear as a result of the initial transformation operation, or the subsequent reduction operation
+ - Use this reasoning to choose a point for an initial breakpoint
+ - Inspect data to see if you can observe *-inf* in any of the intermediate data
+ - Use this observation to repeat the process of setting a breakpoint and inspecting data
+ - Alternatively, work linearly through the code, setting an initial breakpoint and single-stepping, to see if you can observe incorrect data
+ - You may need to change thread focus or observe data belonging to other threads
+ - The reduction also offers the opportunity to tackle this problem via divide-and-conquer, or binary searching
+ - Consider reducing the problem size (i.e. length of terms to generate the estimate) to simplify your debug effort
