@@ -70,10 +70,10 @@ Hints:
 Yay! You sorted out the problem, made the change to indexing, and now the code prints "Success!"  It's time to send the user on their way. Or is it? Could there be other errors?  Use additional compute-sanitizer switches (*--tool racecheck*, *--tool initcheck*, *--tool synccheck*) to identify other "latent" issues. Fix them.
 
 Hints:
-  - the only tool that should report a problem at this point is the racecheck tool.
-  - see if you can use the line number information embedded in the error reports to identify the trouble "zone" in the kernel code
-  - since you know that the racecheck tool reports race issues with shared memory usage (only), and that these often involve missing synchronization, can you identify the right place to insert appropriate synchronization into the kernel code?  Try experimenting. Inserting additional synchronization into a CUDA kernel code usually does not break code correctness.
-  - refer to *task1_solution.cu* if you get stuck
+  - The only tool that should report a problem at this point is the racecheck tool.
+  - See if you can use the line number information embedded in the error reports to identify the trouble "zone" in the kernel code
+  - Since you know that the racecheck tool reports race issues with shared memory usage (only), and that these often involve missing synchronization, can you identify the right place to insert appropriate synchronization into the kernel code? Try experimenting. Inserting additional synchronization into a CUDA kernel code usually does not break code correctness.
+  - Refer to *task1_solution.cu* if you get stuck
 
 # **Task 2**
 
