@@ -1,20 +1,26 @@
-Task1:
+# **Task 1**
 
 In this task we will explore using compute-sanitizer.  A complete tiled matrix-multiply example code is provided in the CUDA programming guide.  The task1.cu code includes this code with a few changes, and also a main() routine to drive the operation.  You are providing support services to a  cluster user community, and one of your users has presented this code with the report that "CUDA error checking doesn't show any errors, but I'm not getting the right answer.  Please help!"
 
 First, compile the code as follows, and run the code to observe the reported behavior:
 
+```
 nvcc -arch=sm_70 task1.cu -o task1 --lineinfo
+```
 
 We are compiling the code for the GPU architecture being used (Volta SM 7.0 in this case) and we are also compiling with --lineinfo switch.  You know as a CUDA support engineer that this will be a useful switch when it comes to using compute-sanitizer.
 
 If this code produces the correct matrix result, it will display:
 
+```
 Success!
+```
 
 But unfortunately we don't see that.
 
-Part A: Use basic compute-sanitizer functionality (no additional switches) to identify a problem in the code.  Using the output from compute-sanitizer, identify the offending line of code.  Fix this issue.
+## Part A 
+
+Use basic compute-sanitizer functionality (no additional switches) to identify a problem in the code.  Using the output from compute-sanitizer, identify the offending line of code.  Fix this issue.
 
 Hints:
   - remember that --lineinfo will cause compute-sanitizer (in this usage) to report the actual line of code that is causing the problem
@@ -22,25 +28,31 @@ Hints:
   - memory access problems are often caused by indexing errors.  See if you can spot an indexing error that may lead to this issue (hint - the classic computer science "off by one" error.)
   - refer to task1_solution.cu if you get stuck
 
-Part B: Yay! You sorted out the problem, made the change to indexing, and now the code prints "Success!"  It's time to send the user on their way.  Or is it?  Could there be other errors?  Use additional compute-sanitizer switches (--tool racecheck, --tool initcheck, --tool synccheck) to identify other "latent" issues.  Fix them
+## Part B
+
+Yay! You sorted out the problem, made the change to indexing, and now the code prints "Success!"  It's time to send the user on their way.  Or is it?  Could there be other errors?  Use additional compute-sanitizer switches (--tool racecheck, --tool initcheck, --tool synccheck) to identify other "latent" issues.  Fix them
 
 Hints:
   - the only tool that should report a problem at this point is the racecheck tool.
   - see if you can use the line number information embedded in the error reports to identify the trouble "zone" in the kernel code
   - since you know that the racecheck tool reports race issues with shared memory usage (only), and that these often involve missing synchronization, can you identify the right place to insert appropriate synchronization into the kernel code?  Try experimenting. Inserting additional synchronization into a CUDA kernel code usually does not break code correctness.
-  - refer to task1_solution.cu if you get stuck
+  - refer to *task1_solution.cu* if you get stuck
 
-Task2:
+# **Task 2**
 
 In this task we will explore basic usage of cuda-gdb.  Once again you are providing user support at a cluster help desk.  The user has a code that produces a -inf (negative floating-point infinity) result, and that is not expected.  The code consists of a transformation operation (one data element created/modified per thread) followed by a reduction operation (per-thread results summed together). The output of the reduction is -inf.  See if you can use cuda-gdb to identify the problem and rectify it.
 
 To prepare to use cuda-gdb, its necessary to compile a debug project.  Therefore compile the code as follows:
 
+```
 nvcc -arch=sm_70 task2.cu -o task2 -G -g -std=c++14
+```
 
 You can then start debugging with:
 
+```
 cuda-gdb ./task2
+```
 
 Don't forget that you cannot inspect device data until you are stopped after a device-code breakpoint.
 
