@@ -31,21 +31,21 @@ module load cgpu cuda/11.4.0
 nvcc -arch=sm_70 task1.cu -o task1 -lineinfo
 ```
 
-To run during the node reservation (10:30-12:30 Pacific time on July 16):
+To run during the node reservation (10:30-12:30 Pacific time on September 14):
 ```
 module load cgpu cuda/11.4.0
-srun -C gpu -N 1 -n 1 -t 10 -A ntrain --reservation=cuda_training -q shared -G 1 -c 1 ./task1
+srun -C gpu -N 1 -n 1 -t 10 -A ntrain --reservation=cuda_debug -q shared -G 1 -c 1 ./task1
 ```
 
 or grab a GPU node first, then run interactively:
 ```
 module load cgpu cuda 
-salloc -C gpu -N 1 -t 60 -A ntrain --reservation=cuda_training -q shared -G 1 -c 1
+salloc -C gpu -N 1 -t 60 -A ntrain --reservation=cuda_debug -q shared -G 1 -c 1
 srun -n 1 ./task1
 ```
 
 To run outside of the node reservation window:
-Same steps as above, but do not include "*--reservation=cuda_training -q shared*" in the srun or salloc commands.
+Same steps as above, but do not include "*--reservation=cuda_debug -q shared*" in the srun or salloc commands.
 
 If this code produces the correct matrix result, it will display:
 
