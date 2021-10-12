@@ -1,4 +1,4 @@
-# 013_CudaGraphs
+# CUDA Graphs
 
 In this homework we will look at two different codes, both using Cuda Graphs. These codes consist of small kernels and could see some benefit from Cuda Graphs given the particular workflow. The two codes are axpy_stream_capture and axpy_cublas, each having a verison with_fixme and from_scratch. We recommend starting with the with_fixme versions of the two code, and then trying the from_scratch if you want a challenge. The with_fixme versions will have spots where you will need to fix to get the code to run, but the framework is all set in place. The from_scratch versions require you to implement the graph set up and logic by hand.
 
