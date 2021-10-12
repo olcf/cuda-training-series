@@ -170,7 +170,6 @@ high_resolution_clock::time_point t1 = high_resolution_clock::now();
 for (int i = 0; i < 1000; ++i){
 cudaGraphLaunch(instance, streams[0]);
 cudaCheckErrors("Launching graph failed");
-//cudaStreamSynchronize(streams[0]);
 }
 
 cudaDeviceSynchronize();
@@ -178,7 +177,7 @@ high_resolution_clock::time_point t2 = high_resolution_clock::now();
 
 duration<double> total_time = duration_cast<duration<double>>(t2 - t1);
 
-std::cout << "Time" << total_time.count() << " s" << std::endl;
+std::cout << "Time " << total_time.count() << " s" << std::endl;
 
 // Copy data back to host
 cudaMemcpy(h_y, d_y, N, cudaMemcpyDeviceToHost);

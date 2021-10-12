@@ -155,8 +155,6 @@ for (int i = 0; i < 1000; ++i){
 
     kernel_d<<<blocks, threads, 0, streams[0]>>>(d_x, d_y);
     cudaCheckErrors("Kernel d failed");
-
-//    cudaStreamSynchronize(streams[0]);
 }
 
 // Below is for timing
@@ -166,7 +164,7 @@ high_resolution_clock::time_point t2 = high_resolution_clock::now();
 
 duration<double> total_time = duration_cast<duration<double>>(t2 - t1);
 
-std::cout << "Time" << total_time.count() << " s" << std::endl;
+std::cout << "Time " << total_time.count() << " s" << std::endl;
 
 cudaDeviceSynchronize();
 
