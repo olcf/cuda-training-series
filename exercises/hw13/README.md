@@ -52,18 +52,18 @@ nvcc -arch=sm_70 axpy_stream_capture_with_fixme.cu -o axpy_stream_capture_with_f
 To run during the node reservation (10:30-12:30 Pacific time on October 13):
 ```
 module load cgpu cuda/11.4.0
-srun -C gpu -N 1 -n 1 -t 10 -A ntrain2 --reservation=cuda_debug -q shared -G 1 -c 1 ./axpy_stream_capture_with_fixme
+srun -C gpu -N 1 -n 1 -t 10 -A ntrain2 --reservation=cuda_graphs -q shared -G 1 -c 1 ./axpy_stream_capture_with_fixme
 ```
 
 or grab a GPU node first, then run interactively:
 ```
 module load cgpu cuda 
-salloc -C gpu -N 1 -t 60 -A ntrain2 --reservation=cuda_debug -q shared -G 1 -c 1
+salloc -C gpu -N 1 -t 60 -A ntrain2 --reservation=cuda_graphs -q shared -G 1 -c 1
 srun -n 1 ./axpy_stream_capture_with_fixme
 ```
 
 To run outside of the node reservation window:
-Same steps as above, but do not include "*--reservation=cuda_debug -q shared*" in the srun or salloc commands.
+Same steps as above, but do not include "*--reservation=cuda_graphs -q shared*" in the srun or salloc commands.
 
 FIXMEs
 1. cudaGraphCreate(FIXME, 0);
